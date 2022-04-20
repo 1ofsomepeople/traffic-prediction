@@ -1,0 +1,35 @@
+A = prior_mu, prior_mu.T  
+epoch: 490, kld_loss = 0.076, nll_loss = 3.121, loss = 3.1966, AUC = 0.8646, AP = 0.8413, New AUC = 0.8417, New AP = 0.8981
+epoch: 491, kld_loss = 0.076, nll_loss = 3.096, loss = 3.1718, AUC = 0.8679, AP = 0.8469, New AUC = 0.8442, New AP = 0.9008
+epoch: 492, kld_loss = 0.076, nll_loss = 3.104, loss = 3.1796, AUC = 0.8676, AP = 0.8461, New AUC = 0.8454, New AP = 0.9012
+epoch: 493, kld_loss = 0.076, nll_loss = 3.106, loss = 3.1818, AUC = 0.8667, AP = 0.8436, New AUC = 0.8460, New AP = 0.9009
+epoch: 494, kld_loss = 0.076, nll_loss = 3.096, loss = 3.1717, AUC = 0.8646, AP = 0.8391, New AUC = 0.8439, New AP = 0.8990
+epoch: 495, kld_loss = 0.076, nll_loss = 3.109, loss = 3.1849, AUC = 0.8587, AP = 0.8322, New AUC = 0.8377, New AP = 0.8943
+epoch: 496, kld_loss = 0.076, nll_loss = 3.095, loss = 3.1705, AUC = 0.8606, AP = 0.8353, New AUC = 0.8395, New AP = 0.8963
+epoch: 497, kld_loss = 0.076, nll_loss = 3.097, loss = 3.1734, AUC = 0.8658, AP = 0.8437, New AUC = 0.8451, New AP = 0.9009
+epoch: 498, kld_loss = 0.076, nll_loss = 3.095, loss = 3.1706, AUC = 0.8681, AP = 0.8479, New AUC = 0.8469, New AP = 0.9023
+epoch: 499, kld_loss = 0.076, nll_loss = 3.099, loss = 3.1752, AUC = 0.8670, AP = 0.8461, New AUC = 0.8455, New AP = 0.9011
+
+A = enc_mu, enc_mu.T
+epoch: 490, kld_loss = 0.076, nll_loss = 3.107, loss = 3.1826, AUC = 0.8447, AP = 0.8345, New AUC = 0.9011, New AP = 0.9370
+epoch: 491, kld_loss = 0.076, nll_loss = 3.113, loss = 3.1889, AUC = 0.8468, AP = 0.8352, New AUC = 0.9021, New AP = 0.9371
+epoch: 492, kld_loss = 0.076, nll_loss = 3.098, loss = 3.1743, AUC = 0.8480, AP = 0.8354, New AUC = 0.9035, New AP = 0.9373
+epoch: 493, kld_loss = 0.076, nll_loss = 3.100, loss = 3.1762, AUC = 0.8454, AP = 0.8340, New AUC = 0.9016, New AP = 0.9371
+epoch: 494, kld_loss = 0.076, nll_loss = 3.105, loss = 3.1814, AUC = 0.8463, AP = 0.8348, New AUC = 0.9011, New AP = 0.9368
+epoch: 495, kld_loss = 0.076, nll_loss = 3.114, loss = 3.1902, AUC = 0.8488, AP = 0.8361, New AUC = 0.9026, New AP = 0.9369
+epoch: 496, kld_loss = 0.076, nll_loss = 3.106, loss = 3.1821, AUC = 0.8482, AP = 0.8357, New AUC = 0.9027, New AP = 0.9371
+epoch: 497, kld_loss = 0.076, nll_loss = 3.110, loss = 3.1856, AUC = 0.8451, AP = 0.8340, New AUC = 0.9015, New AP = 0.9370
+epoch: 498, kld_loss = 0.076, nll_loss = 3.093, loss = 3.1686, AUC = 0.8453, AP = 0.8342, New AUC = 0.9011, New AP = 0.9369
+epoch: 499, kld_loss = 0.076, nll_loss = 3.110, loss = 3.1862, AUC = 0.8484, AP = 0.8360, New AUC = 0.9029, New AP = 0.9371
+
+without KL
+epoch: 490, kld_loss = 0.161, nll_loss = 3.544, loss = 3.5442, AUC = 0.6936, AP = 0.6508, New AUC = 0.7921, New AP = 0.8475
+epoch: 491, kld_loss = 0.161, nll_loss = 3.538, loss = 3.5380, AUC = 0.6934, AP = 0.6509, New AUC = 0.7918, New AP = 0.8470
+epoch: 492, kld_loss = 0.162, nll_loss = 3.550, loss = 3.5505, AUC = 0.6939, AP = 0.6518, New AUC = 0.7923, New AP = 0.8473
+epoch: 493, kld_loss = 0.162, nll_loss = 3.541, loss = 3.5411, AUC = 0.6896, AP = 0.6468, New AUC = 0.7897, New AP = 0.8457
+epoch: 494, kld_loss = 0.162, nll_loss = 3.544, loss = 3.5444, AUC = 0.6893, AP = 0.6460, New AUC = 0.7892, New AP = 0.8455
+epoch: 495, kld_loss = 0.161, nll_loss = 3.542, loss = 3.5419, AUC = 0.6889, AP = 0.6454, New AUC = 0.7891, New AP = 0.8456
+epoch: 496, kld_loss = 0.161, nll_loss = 3.542, loss = 3.5415, AUC = 0.6904, AP = 0.6465, New AUC = 0.7901, New AP = 0.8461
+epoch: 497, kld_loss = 0.161, nll_loss = 3.541, loss = 3.5414, AUC = 0.6956, AP = 0.6517, New AUC = 0.7928, New AP = 0.8472
+epoch: 498, kld_loss = 0.162, nll_loss = 3.541, loss = 3.5409, AUC = 0.6992, AP = 0.6556, New AUC = 0.7954, New AP = 0.8489
+epoch: 499, kld_loss = 0.162, nll_loss = 3.541, loss = 3.5405, AUC = 0.6958, AP = 0.6516, New AUC = 0.7931, New AP = 0.8471
