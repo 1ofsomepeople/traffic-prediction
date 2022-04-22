@@ -15,7 +15,7 @@ device = torch.device(device)
 # Load time series adjacent in Sparse and Dense List
 adj_time_list, adj_orig_dense_list = load_data(args.dataset)
 # Get training edges set and false set uesd to score
-train_edges_l = mask_edges_det(adj_time_list)[1]    # (t, #Training Edges, 2)
+train_edges_l = mask_edges_det(adj_time_list)[1]    # (t, #Training Edges, 2),注意，这是边探测任务而非预测
 pos_edges_l, false_edges_l = mask_edges_prd(adj_time_list)  # (t, #Edges, 2)
 pos_edges_l_n, false_edges_l_n = \
     mask_edges_prd_new(adj_time_list, adj_orig_dense_list) # (t, #New Edges, 2)
@@ -48,7 +48,7 @@ for epoch in range(args.epochs):
     kld_loss, nll_loss, _, _, hidden_st = model(
         x_in[seq_start:seq_end],
         edge_idx_list[seq_start:seq_end],
-        adj_orig_dense_list[seq_start:seq_end])
+        adj_orig_dense_list[seq_start:seq_end]) # x_in:(6,663,663), edge_idx_list:(6,2,$edges), adj_orig_dense_list:(6,663,663)
     loss = kld_loss + nll_loss
     loss.backward()
     nn.utils.clip_grad_norm_(model.parameters(), args.clip)
@@ -91,16 +91,16 @@ for epoch in range(args.epochs):
 ##############################
 ## calulate average metrics ##
 ##############################
-for i in range(100):
+for i in range(20):
     _, _, all_enc_mu, all_prior_mu, _ = model(
         x_in[seq_end:],
         edge_idx_list[seq_end:],
-        adj_orig_dense_list[seq_end:], hidden_st)
+        adj_orig_dense_list[seq_end:], hidden_st) # 为什么模型可以看到未来的输入？,猜测这里作者是“连续预测”，即{1~6}->{7},{1~7}->{8},{1~8}->{9}，所以能看到“未来的输入”
 
     auc_scores_prd, ap_scores_prd = get_roc_scores(
         pos_edges_l[seq_end:],
         false_edges_l[seq_end:],
-        adj_orig_dense_list[seq_end:], all_prior_mu)
+        adj_orig_dense_list[seq_end:], all_prior_mu) # 使用z的条件先验分布作为节点的embedding
 
     auc_scores_prd_new, ap_scores_prd_new = get_roc_scores(
         pos_edges_l_n[seq_end:],

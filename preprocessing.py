@@ -9,10 +9,10 @@ np.random.seed(seed)
 def sparse_to_tuple(sparse_mx):
 # Input: a sparse matrix
 # Output: Coords, values and shape
-# coords.shape = (#Edges, 2)
+# coords.shape = ($Edges, 2)
     if not sp.isspmatrix_coo(sparse_mx):
         sparse_mx = sparse_mx.tocoo()
-    coords = np.vstack((sparse_mx.row, sparse_mx.col)).transpose()
+    coords = np.vstack((sparse_mx.row, sparse_mx.col)).transpose() # 得到每一个数据对应的行列索引
     values = sparse_mx.data
     shape = sparse_mx.shape
     return coords, values, shape
@@ -36,27 +36,27 @@ def ismember(a, b, tol=5):
 def getEdges(adj):
 # Input: Sparse adjacent
 # Output: Single-direction graph edges with and without self-loop: List
-#         edges.shpae = (#Edges, 2)
+#         edges.shpae = ($Edges, 2)
     adj = adj - sp.dia_matrix(
         (adj.diagonal()[np.newaxis, :], [0]),
-        shape=adj.shape)
+        shape=adj.shape) # 消去自环
     adj.eliminate_zeros() # 放弃0值对应的索引信息
     assert np.diag(adj.todense()).sum() == 0
     adj_triu = sp.triu(adj) #取出稀疏矩阵的上三角部分的非零元素
     adj_tuple = sparse_to_tuple(adj_triu) # 这个函数的作用就是 返回一个稀疏矩阵的非0值坐标、非0值和整个矩阵的shape
     edges = adj_tuple[0]
     edges_all = sparse_to_tuple(adj)[0]
-    return edges, edges_all
+    return edges, edges_all # 对于无向图来说，由于前面消去了自环，导致edges的数量是edges_all的一半
 
 def makeFalseEdges(nums, size, edgeSet):
     edges_false = []
     while len(edges_false) < nums:
         h = np.random.randint(0, size)
         t = np.random.randint(0, size)
-        if h == t: continue
+        if h == t: continue # 确保没有自环
         e = [[h, t], [t, h]]
-        if edges_false and ismember(e, np.array(edges_false)): continue
-        if ismember(e, edgeSet): continue
+        if edges_false and ismember(e, np.array(edges_false)): continue # 防止重复添加
+        if ismember(e, edgeSet): continue # 确保是错误的边
         edges_false.append([h, t])
     assert ~ismember(edges_false, edgeSet)
     return edges_false
@@ -69,7 +69,7 @@ def mask_edges_det(adjs_list):
     val_edges_l, val_edges_false_l = [], []
     test_edges_l, test_edges_false_l = [], []
     edges_list = []
-    edge_feature = adjs_list[0].shape[0]
+    edge_feature = adjs_list[0].shape[0] #事实上是节点的数量？
     for i in range(0, len(adjs_list)):
         adj = adjs_list[i]
         edges, edges_all = getEdges(adj)
@@ -89,6 +89,8 @@ def mask_edges_det(adjs_list):
 
         test_edges_false = makeFalseEdges(len(test_edges), edge_feature, edges_all)
         val_edges_false = makeFalseEdges(len(val_edges), edge_feature, edges_all)
+
+        # 确保集合之间无交集
         assert ~ismember(val_edges, train_edges)
         assert ~ismember(test_edges, train_edges)
         assert ~ismember(val_edges, test_edges)
@@ -106,7 +108,7 @@ def mask_edges_det(adjs_list):
         test_edges_l.append(test_edges)
         test_edges_false_l.append(test_edges_false)
 
-    return adj_train_l, train_edges_l, val_edges_l, val_edges_false_l, test_edges_l, test_edges_false_l
+    return adj_train_l, train_edges_l, val_edges_l, val_edges_false_l, test_edges_l, test_edges_false_l # edges都是边的二元组表示，adj是矩阵形式
 
 
 def mask_edges_prd(adjs_list):

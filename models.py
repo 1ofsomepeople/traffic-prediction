@@ -214,6 +214,7 @@ class VGRNN(nn.Module):
         assert len(adj_orig_dense_list) == len(edge_idx_list)   # Snapshots
         kld_loss = 0
         nll_loss = 0
+        mse_loss = 0
         all_enc_mu, all_enc_logvar = [], []
         all_prior_mu, all_prior_logvar = [], []
         all_dec_t, all_z_t = [], []
@@ -255,11 +256,10 @@ class VGRNN(nn.Module):
             dec_t = dec_t[:n_nodes, :n_nodes]
 
             # Calculate and accumulate the KL-Divergence and Binary Cross-entropy
-            kld_loss = kld_loss + \
-                self._kld_gauss(enc_mu_t, enc_logvar_t,
-                                prior_mu_t, prior_logvar_t) # 两个高斯分布的dl散度，有解析解
-            nll_loss = nll_loss + \
-                self._nll_bernoulli(dec_t, adj_orig_dense_list[t]) #重构损失
+            kld_loss = kld_loss + self._kld_gauss(enc_mu_t, enc_logvar_t, prior_mu_t, prior_logvar_t) # 两个高斯分布的dl散度，有解析解
+            # breakpoint()
+            # nll_loss = nll_loss + self._nll_bernoulli(dec_t, adj_orig_dense_list[t]) #重构损失
+            mse_loss = mse_loss + self._mse(dec_t, adj_orig_dense_list[t]) #重构损失
             # Save the parameters learned at time t
             all_enc_mu.append(enc_mu_t)
             all_enc_logvar.append(enc_logvar_t)
@@ -267,10 +267,11 @@ class VGRNN(nn.Module):
             all_prior_logvar.append(prior_logvar_t)
             all_dec_t.append(dec_t)
             all_z_t.append(z_t)
-        return kld_loss, nll_loss, all_enc_mu, all_prior_mu, h
+        return kld_loss, mse_loss, all_enc_mu, all_prior_mu, h
 
     def decoder(self, z):
-        outputs = InnerProductDecoder(act=lambda x: x)(z)
+        # outputs = InnerProductDecoder(act=lambda x: x)(z)
+        outputs = Decoder(z_dim=z.shape[1]).to(self.device)(z)
         return outputs
 
     def _reparameterized(self, mu, logvar):
@@ -299,6 +300,9 @@ class VGRNN(nn.Module):
         nll_loss = -1 * norm * torch.mean(nll_loss_mat, dim=[0, 1])
         return -nll_loss
 
+    def _mse(self, pred, target_adj):
+        return F.mse_loss(pred, target_adj.to(self.device))
+
 
 class InnerProductDecoder(nn.Module):
     def __init__(self, act=torch.sigmoid, dropout=0.5, training=True):
@@ -311,4 +315,20 @@ class InnerProductDecoder(nn.Module):
         inp = F.dropout(inp, self.dropout, training=self.training)
         x = torch.transpose(inp, dim0=0, dim1=1)
         x = torch.mm(inp, x)
+        return self.act(x)
+
+class Decoder(nn.Module):
+    def __init__(self, act=torch.relu, dropout=0.5, z_dim=0, training=True) -> None:
+        super(Decoder, self).__init__()
+        self.act = act
+        self.dropout = dropout
+        self.training = training
+        self.transfer_matrix = nn.Parameter(torch.empty(size=(z_dim, z_dim)))
+        nn.init.xavier_uniform_(self.transfer_matrix.data, gain=1.414)
+
+    def forward(self, inp):
+        # self.transfer_matrix = self.transfer_matrix.to(inp.device)
+        # breakpoint()
+        inp = F.dropout(inp, self.dropout, training=self.training)
+        x = inp@self.transfer_matrix@inp.t()
         return self.act(x)
