@@ -130,4 +130,7 @@ dmypy.json
 
 
 # metro data
-/data/metro
+/data/metro/origin_data
+/data/metro/source_data.npy
+/data/metro/adj_time_list.pickle
+/data/metro/adj_orig_dense_list.pickle
